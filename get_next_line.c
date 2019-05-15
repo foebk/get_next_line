@@ -13,7 +13,7 @@
 #include "libft.h"
 #include <fcntl.h>
 #include <stdio.h>
-#define BUFF_SIZE 100
+#define BUFF_SIZE 10
 
 static int	get_next_line(const int fd, char **line)
 {
@@ -22,11 +22,6 @@ static int	get_next_line(const int fd, char **line)
 	static char		*tmp = NULL;
 
 	*line = ft_memalloc(1);
-	if (tmp == NULL)
-		buf[BUFF_SIZE] = '\0';
-		if ((ret = read(fd, buf, BUFF_SIZE)) == 0)
-			return (-1);
-	buf[ret] = '\0';
 	if ((tmp != NULL) && (ft_strnchr(tmp, '\n') == -1))
 	{
 		*line = ft_strjoin(*line, tmp, 1);
@@ -35,9 +30,13 @@ static int	get_next_line(const int fd, char **line)
 	else if ((tmp != NULL) && (ft_strnchr(tmp, '\n') != -1))
 	{
 		*line = ft_strjoin(*line, ft_strbs(tmp, '\n'), 12);
-		tmp = ft_strchr(tmp, '\n');
+		tmp = ft_strchr(tmp, '\n') + 1;
 		return (1);
 	}
+	if (tmp == NULL)
+		if ((ret = read(fd, buf, BUFF_SIZE)) == 0)
+			return (-1);
+	buf[ret] = '\0';
 	while (ft_strnchr(buf, '\n') == -1)
 	{
 		*line = ft_strjoin(*line, buf, 1);
@@ -62,12 +61,11 @@ int main()
 
 	fd = open("test", O_RDONLY);	
 	get_next_line(fd, &line);
+	// ft_putendl(line);
+	get_next_line(fd, &line);
+	// ft_putendl(line);
+	get_next_line(fd, &line);
+	// ft_putendl(line);
+	get_next_line(fd, &line);
 	ft_putendl(line);
-	// get_next_line(fd, &line);
-	// ft_putendl(line);
-	// get_next_line(fd, &line);
-	// ft_putendl(line);
-	// printf("%s\n", "d");
-	// get_next_line(fd, &line);
-	// ft_putendl(line);
 }
