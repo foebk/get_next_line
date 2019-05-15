@@ -13,15 +13,17 @@
 #include "libft.h"
 #include <fcntl.h>
 #include <stdio.h>
-#define BUFF_SIZE 100000
+#define BUFF_SIZE 1
 
-static int	get_next_line(const int fd, char **line)
+int	get_next_line(const int fd, char **line)
 {
 	int				ret;
 	char			buf[BUFF_SIZE + 1];
 	static char		*tmp = NULL;
 
-	*line = ft_memalloc(1);
+	if (((fd < 0) || (!line) || (ret = read(fd, buf, 0)) || BUFF_SIZE < 1))
+		return (-1);
+	*line = ft_strnew(0);
 	if ((tmp != NULL) && (ft_strnchr(tmp, '\n') == -1))
 	{
 		*line = ft_strjoin(*line, tmp, 1);
@@ -33,15 +35,14 @@ static int	get_next_line(const int fd, char **line)
 		tmp = ft_strchr(tmp, '\n') + 1;
 		return (1);
 	}
-	if (tmp == NULL)
-		if ((ret = read(fd, buf, BUFF_SIZE)) == 0)
-			return (-1);
+	if ((ret = read(fd, buf, BUFF_SIZE)) == 0)
+		return (*line[0] != '\0') ? 1 : 0;	
 	buf[ret] = '\0';
 	while (ft_strnchr(buf, '\n') == -1)
 	{
 		*line = ft_strjoin(*line, buf, 1);
 		if ((ret = read(fd, buf, BUFF_SIZE)) == 0)
-			return (-1);
+			return (*line[0] != '\0') ? 1 : 0;
 		buf[ret] = '\0';
 	}
 	if (ft_strnchr(buf, '\n') != -1)
@@ -51,21 +52,22 @@ static int	get_next_line(const int fd, char **line)
 		tmp = ft_strdup(ft_strchr(buf, '\n') + 1);
 		return (1);
 	}
+	return (0);
 }
 
-// int main()
-// {
-// 	int 	fd;
-// 	char	*line;
-// 	char	buf[BUFF_SIZE + 1];
+int main()
+{
+	int 	fd;
+	char	*line;
 
-// 	fd = open("test", O_RDONLY);	
-// 	get_next_line(fd, &line);
-// 	ft_putendl(line);
-// 	get_next_line(fd, &line);
-// 	ft_putendl(line);
-// 	get_next_line(fd, &line);
-// 	ft_putendl(line);
-// 	get_next_line(fd, &line);
-// 	ft_putendl(line);
-// }
+	fd = open("test", O_RDONLY);
+
+	printf("%d\n", get_next_line(fd, &line));
+	ft_putendl(line);
+	printf("%d\n", get_next_line(fd, &line));
+	ft_putendl(line);
+	printf("%d\n", get_next_line(fd, &line));
+	ft_putendl(line);
+	printf("%d\n", get_next_line(fd, &line));
+	ft_putendl(line);
+}
