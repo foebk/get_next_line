@@ -15,10 +15,12 @@
 #include <stdio.h>
 #include "get_next_line.h"
 
-int	ilovefree(char **tmp)
+int	ilovefree(char **tmp, char **line)
 {
 	char *tmp2;
 
+	if ((*line = ft_strjoin(*line, ft_strbs(*tmp, '\n'), 12)) == 0)
+		return (-1);
 	tmp2 = ft_strdup(ft_strchr(*tmp, '\n') + 1);
 	ft_strdel(tmp);
 	*tmp = ft_strdup(tmp2);
@@ -49,7 +51,7 @@ int	exit_values(char *buf, int fd, char **line, char **tmp)
 	return (0);
 }
 
-int	get_next_line(const int fd, char **line)
+int	line_put(const int fd, char **line)
 {
 	int				ret;
 	char			buf[BUFF_SIZE + 1];
@@ -66,36 +68,35 @@ int	get_next_line(const int fd, char **line)
 		free(tmp);
 	}
 	else if ((tmp != NULL) && (ft_strnchr(tmp, '\n') != -1))
-	{
-		if ((*line = ft_strjoin(*line, ft_strbs(tmp, '\n'), 12)) == 0)
-			return (-1);
-		return (ilovefree(&tmp));
-	}
+		return (ilovefree(&tmp, line));
 	if ((ret = read(fd, buf, BUFF_SIZE)) == 0)
 		return (*line[0] != '\0') ? 1 : 0;
 	buf[ret] = '\0';
 	return (exit_values(buf, fd, line, &tmp));
 }
 
+int	get_next_line(const int fd, char **line)
+{
+	static t_list	*head;	
+}
+
 // int main()
 // {
 // 	int 	fd;
 // 	char	*line;
-// 	char	*str;
-// 	int		len = 50;
 
 // 	fd = open("test", O_RDONLY);
 
-// 	printf("%d\n", get_next_line(fd, &line));
+// 	printf("%d\n", line_put(fd, &line));
 // 	ft_putendl(line);
 // 	free(line);
-// 	printf("%d\n", get_next_line(fd, &line));
+// 	printf("%d\n", line_put(fd, &line));
 // 	ft_putendl(line);
 // 	free(line);
-// 	printf("%d\n", get_next_line(fd, &line));
+// 	printf("%d\n", line_put(fd, &line));
 // 	ft_putendl(line);
 // 	free(line);
-// 	printf("%d\n", get_next_line(fd, &line));
+// 	printf("%d\n", line_put(fd, &line));
 // 	ft_putendl(line);
 // 	free(line);
 // }
