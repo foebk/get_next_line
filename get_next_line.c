@@ -51,7 +51,7 @@ int	exit_values(char *buf, int fd, char **line, char **tmp)
 	return (0);
 }
 
-int	line_put(const int fd, char **line)
+int	lineput(const int fd, char **line)
 {
 	int				ret;
 	char			buf[BUFF_SIZE + 1];
@@ -77,26 +77,30 @@ int	line_put(const int fd, char **line)
 
 int	get_next_line(const int fd, char **line)
 {
-	static t_list	*head;	
+	static t_list	*head;
+
+	if (head == NULL)
+		if ((head = malloc(sizeof(t_list)) == NULL))
+			return (-1);
 }
 
-// int main()
-// {
-// 	int 	fd;
-// 	char	*line;
+int main()
+{
+	int 	fd;
+	char	*line;
 
-// 	fd = open("test", O_RDONLY);
+	fd = open("test", O_RDONLY);
 
-// 	printf("%d\n", line_put(fd, &line));
+// 	printf("%d\n", get_next_line(fd, &line));
 // 	ft_putendl(line);
 // 	free(line);
-// 	printf("%d\n", line_put(fd, &line));
+// 	printf("%d\n", get_next_line(fd, &line));
 // 	ft_putendl(line);
 // 	free(line);
-// 	printf("%d\n", line_put(fd, &line));
+// 	printf("%d\n", get_next_line(fd, &line));
 // 	ft_putendl(line);
 // 	free(line);
-// 	printf("%d\n", line_put(fd, &line));
+// 	printf("%d\n", get_next_line(fd, &line));
 // 	ft_putendl(line);
 // 	free(line);
-// }
+}
