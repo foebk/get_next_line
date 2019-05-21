@@ -44,6 +44,7 @@ int	exit_values(char *buf, int fd, char **line, char **tmp)
 	{
 		if ((*line = ft_strjoin(*line, ft_strbs(buf, '\n'), 12)) == 0)
 			return (-1);
+		free(*tmp);
 		if ((*tmp = ft_strdup(ft_strchr(buf, '\n') + 1)) == 0)
 			return (-1);
 		return (1);
@@ -57,15 +58,15 @@ int	lineput(const int fd, char **tmp, char **line)
 	char			buf[BUFF_SIZE + 1];
 	// char			*tmp;
 
-	if (((fd < 0) || (!line) || (ret = read(fd, buf, 0)) || BUFF_SIZE < 1))
+	if (((fd < 0) || (!line) || (read(fd, buf, 0) < 0) || BUFF_SIZE < 1))
 		return (-1);
 	*line = ft_strnew(0);
 	if ((*tmp != NULL) && (ft_strnchr(*tmp, '\n') == -1))
 	{
 		if ((*line = ft_strjoin(*line, *tmp, 1)) == 0)
 			return (-1);
-		*tmp = NULL;
 		free(*tmp);
+		*tmp = NULL;
 	}
 	else if ((*tmp != NULL) && (ft_strnchr(*tmp, '\n') != -1))
 		return (ilovefree(tmp, line));
@@ -80,46 +81,82 @@ int	get_next_line(const int fd, char **line)
 	static t_list	*head;
 	t_list			*lst;
 	t_list			*prelst;
+	int				id;
 	
+	prelst = NULL;
 	if (head == NULL)
-		if (!((head = ft_lstnew(NULL, fd))))
+		if (!((head = ft_lstnew(NULL, 0))))
 			return (-1);
-	if (head->next == NULL)
-		head->next = ft_lstnew(NULL, 7);
-	lst = head->next;
-	printf("%d\n", lineput(fd, &(lst->content), line));
-	printf("%s\n", lst->content);
-	printf("%s\n", *line);
+	lst = head;
 	while (lst != NULL)
-	{
-		// printf("%d\n", lst->content_size);
-		if (lst->content_size != fd)
+		if ((lst->content_size != fd) && (prelst = lst))
 			lst = lst->next;
 		else
 			break ;
+	if (lst == NULL)
+	{
+		ft_pushfront(ft_lstnew(NULL, fd), &head);
+		lst = head->next;
 	}
+	id = lineput(fd, &(lst->content), line);
+	if (id == 0)
+	{
+		if (prelst == NULL)
+		{
+			prelst = head->next;
+			free(head->content);
+			free(head);
+			head = prelst;
+		}
+		else
+		{
+			prelst->next = lst->next;
+			free(lst->content);
+			free(lst);
+		}
+	}
+	return (id);
 }
 
 int main()
 {
 	int 	fd;
+	int		fd2;
 	char	*line;
 
 	fd = open("test", O_RDONLY);
-
-	get_next_line(fd, &line);
-	get_next_line(fd, &line);
-	get_next_line(fd, &line);
+	fd2 = open("test2", O_RDONLY);
+	
+	printf("%d\n", get_next_line(fd, &line));
+	printf("%s\n", line);
+	free(line);
 // 	printf("%d\n", get_next_line(fd, &line));
-// 	ft_putendl(line);
+// 	printf("%s\n", line);
+// 	free(line);
+// 	printf("\n");
+// 	printf("%d\n", get_next_line(fd2, &line));
+// 	printf("%s\n", line);
+// 	free(line);
+// 	printf("%d\n", get_next_line(fd2, &line));
+// 	printf("%s\n", line);
+// 	free(line);
+// 	printf("%d\n", get_next_line(fd2, &line));
+// 	printf("%s\n", line);
+// 		free(line);
+// 	printf("\n");
+// 	printf("%d\n", get_next_line(fd, &line));
+// 	printf("%s\n", line);
 // 	free(line);
 // 	printf("%d\n", get_next_line(fd, &line));
-// 	ft_putendl(line);
+// 	printf("%s\n", line);
 // 	free(line);
 // 	printf("%d\n", get_next_line(fd, &line));
-// 	ft_putendl(line);
+// 	printf("%s\n", line);
 // 	free(line);
 // 	printf("%d\n", get_next_line(fd, &line));
-// 	ft_putendl(line);
+// 	printf("%s\n", line);
+// 	free(line);
+// 	printf("%d\n", get_next_line(fd, &line));
+// 	printf("%s\n", line);
 // 	free(line);
 }
