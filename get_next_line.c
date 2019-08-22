@@ -12,7 +12,6 @@
 
 #include "libft.h"
 #include <fcntl.h>
-#include <stdio.h>
 #include "get_next_line.h"
 
 int		ilovefree(char **tmp, char **line)
@@ -21,9 +20,11 @@ int		ilovefree(char **tmp, char **line)
 
 	if ((*line = ft_strjoin(*line, ft_strbs(*tmp, '\n'), 12)) == 0)
 		return (-1);
-	tmp2 = ft_strdup(ft_strchr(*tmp, '\n') + 1);
+	if ((tmp2 = ft_strdup(ft_strchr(*tmp, '\n') + 1)) == NULL)
+		return (-1);
 	ft_strdel(tmp);
-	*tmp = ft_strdup(tmp2);
+	if ((*tmp = ft_strdup(tmp2)) == NULL)
+		return (-1);
 	ft_strdel(&tmp2);
 	return (1);
 }
@@ -76,7 +77,8 @@ int		lineput(const int fd, char **tmp, char **line)
 
 	if (((fd < 0) || (!line) || (read(fd, buf, 0) < 0) || BUFF_SIZE < 1))
 		return (-1);
-	*line = ft_strnew(0);
+	if ((*line = ft_strnew(0)) == NULL)
+		return (-1);
 	if ((*tmp != NULL) && (ft_strnchr(*tmp, '\n') == -1))
 	{
 		if ((*line = ft_strjoin(*line, *tmp, 1)) == 0)
